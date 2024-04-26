@@ -22,17 +22,7 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 model = ChatOpenAI(model="gpt-3.5-turbo")
 
-# Создание шаблона запроса
-prompt = ChatPromptTemplate.from_template("Ответь на вопрос: {question}")
-output_parser = StrOutputParser() # Класс для преобразования ответов модели в строки
 
-chain = prompt | model | output_parser
-# prompt - шаблон пользователя
-# model - prompt передаётся в модель
-# output_parser - ответ в строку
-# chain - ответ(цепочка обработки)
-
-# loader = PyPDFLoader("C:/Users/felix/YandexDisk-korchevskyfelix\Programming/Programming/Python/GOSTRighter/pdf")
 loader = PyPDFLoader(r"C:/Users/felix/YandexDisk-korchevskyfelix\Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf")
 pages = loader.load_and_split()
 # print(pages[0])
@@ -65,10 +55,4 @@ while True:
         print("---Ответ из документа:", '\n', docs[0].page_content[:300])  # Выводит первые 300 символов наиболее релевантного ответа
     else:
         print("Информация по вашему запросу в документе не найдена.")
-
-
-
-
-
-
 
