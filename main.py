@@ -11,6 +11,9 @@ from langchain_openai import OpenAIEmbeddings
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+#мои библиотеки
+from loader import load_and_split_documents
+
 
 
 # Доступ к API-ключу
@@ -23,23 +26,11 @@ api_key = os.getenv("OPENAI_API_KEY")
 model = ChatOpenAI(model="gpt-3.5-turbo")
 
 
-loader = PyPDFLoader(r"C:/Users/felix/YandexDisk-korchevskyfelix\Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf")
-pages = loader.load_and_split()
-# print(pages[0])
+# Импортируем chunks из loader.py
+file_path = r"C:/Users/felix/YandexDisk-korchevskyfelix\Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf"
+chunks = load_and_split_documents(file_path)
+print(f'Количество чанков: {len(chunks)}')
 
-text_splitter = RecursiveCharacterTextSplitter(
-    # Set a really small chunk size, just to show.
-    chunk_size=500,
-    chunk_overlap=0,
-    length_function=len,
-    is_separator_regex=False,
-)
-
-# Разделяем текст документа на чанки
-chunks = text_splitter.split_documents(pages)
-print(f'Колличество чанков: {len(chunks)}')
-
-# faiss_index = FAISS.from_documents(pages, OpenAIEmbeddings())
 
 # Создаем индекс для частей документа
 faiss_index = FAISS.from_documents(chunks, OpenAIEmbeddings(api_key=api_key))
