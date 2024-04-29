@@ -6,20 +6,46 @@ from langchain_community.vectorstores import FAISS
 from loader import load_and_split_documents
 from getDocParamsValues import  analyze_and_save_parameters
 from config import model_config
+from langchain.chains.question_answering import load_qa_chain
 
-def get_answers_from_ai(questions, model):
+def get_document_answers(file_path, questions):
+    texts = load_and_split_documents(file_path)
+    if not texts:
+        print("В документе не найдено данных.")
+        return {}
+    
+ 
+
+    embeddings = OpenAIEmbeddings()
+    faiss_index = FAISS.from_texts(texts, embeddings)
+
+    chain = load_qa_chain(ChatOpenAI(**model_config), chain_type="stuff")
     answers = {}
-    for question in questions:
-        messages = [
-            # System message может быть пустым, если не нужен контекст.
-            # {"role": "system", "content": ""},
-            {"role": "user", "content": question},
-        ]
-        response = model.invoke(messages)
-        answers[question] = response.content.strip()
-        print(response.content.strip())
-    print(answers)    
+    for query in questions:
+        docs = faiss_index.similarity_search(query)
+        input_dict = {
+            'input_documents': docs,
+            'question': query
+        }
+        result = chain.invoke(input=input_dict)
+        answers[query] = result['output_text']
+        print(query + ": " + result['output_text'])  # Печатаем каждый вопрос и его ответ
+
     return answers
+
+# def get_answers_from_ai(questions, model):
+#     answers = {}
+#     for question in questions:
+#         messages = [
+#             # System message может быть пустым, если не нужен контекст.
+#             # {"role": "system", "content": ""},
+#             {"role": "user", "content": question},
+#         ]
+#         response = model.invoke(messages)
+#         answers[question] = response.content.strip()
+#         print(response.content.strip())
+#     print(answers)    
+#     return answers
 
 def print_document_params(doc_params):
     print("---Параметры документа---")
@@ -39,24 +65,15 @@ def main():
     model = ChatOpenAI(**model_config)
 
     file_path = r"C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf"
-    try:
-        chunks = load_and_split_documents(file_path)
-        if not chunks:
-            print("Документ не содержит данных.")
-            return
-        print(f'Количество чанков: {len(chunks)}')
-
-        faiss_index = FAISS.from_documents(chunks, OpenAIEmbeddings(api_key=model_config["api_key"]))
-    except Exception as e:
-        print(f"Ошибка при загрузке или индексации документа: {e}")
-        return
-
     questions = [
-        "Какого размера шрифт следует использовать в этом документе?",
-        "Какие отступы следует использовать в этом документе?"
+        "Какой размер шрифта следует использовать в этом документе?",
+        "Какие отступы следует использовать в этом документе?",
     ]
 
-    answers = get_answers_from_ai(questions, model)
+
+
+    answers = get_document_answers(file_path, questions)
+    print(answers)
     document_params = analyze_and_save_parameters(answers)
     print_document_params(document_params)
 
