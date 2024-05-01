@@ -14,38 +14,23 @@ def get_document_answers(file_path, questions):
         print("В документе не найдено данных.")
         return {}
     
- 
-
     embeddings = OpenAIEmbeddings()
     faiss_index = FAISS.from_texts(texts, embeddings)
 
     chain = load_qa_chain(ChatOpenAI(**model_config), chain_type="stuff")
     answers = {}
     for query in questions:
-        docs = faiss_index.similarity_search(query)
+        query_text = query["text"]  # Получаем текст вопроса из словаря
+        docs = faiss_index.similarity_search(query_text)
         input_dict = {
             'input_documents': docs,
-            'question': query
+            'question': query_text  # Теперь передаем только текст вопроса
         }
         result = chain.invoke(input=input_dict)
-        answers[query] = result['output_text']
-        print(query + ": " + result['output_text'])  # Печатаем каждый вопрос и его ответ
+        answers[query_text] = result['output_text']  # Используем текст вопроса в качестве ключа
+        print(query_text + ": " + result['output_text'])
 
     return answers
-
-# def get_answers_from_ai(questions, model):
-#     answers = {}
-#     for question in questions:
-#         messages = [
-#             # System message может быть пустым, если не нужен контекст.
-#             # {"role": "system", "content": ""},
-#             {"role": "user", "content": question},
-#         ]
-#         response = model.invoke(messages)
-#         answers[question] = response.content.strip()
-#         print(response.content.strip())
-#     print(answers)    
-#     return answers
 
 def print_document_params(doc_params):
     print("---Параметры документа---")
@@ -59,6 +44,15 @@ def print_document_params(doc_params):
     else:
         print("Размер отступа не указан.")
 
+        # Печать размеров полей
+    sides = ['left', 'right', 'top', 'bottom']
+    for side in sides:
+        key = f'margin_size_{side}'
+        if key in doc_params and doc_params[key] is not None:
+            print(f"Размер поля {side}: {doc_params[key]} мм")
+        else:
+            print(f"Размер поля {side} не указан.")
+
 
 
 def main():
@@ -66,21 +60,18 @@ def main():
 
     file_path = r"C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf"
     questions = [
-        "Какой размер шрифта следует использовать в этом документе?",
-        "Какие отступы следует использовать в этом документе?",
+    # {"text": "Какой размер шрифта следует использовать в этом документе?", "type": "font_size"},
+    # {"text": "Какие отступы следует использовать в этом документе?", "type": "indent_size"},
+    {"text": "Какой размер поля должен быть в документе слева?", "type": "margin_size", "side": "left"},
+    {"text": "Какой размер поля должен быть в документе справа?", "type": "margin_size", "side": "right"},
+    {"text": "Какой размер поля должен быть в документе снизу?", "type": "margin_size", "side": "bottom"},
+    {"text": "Какой размер поля должен быть в документе сверху?", "type": "margin_size", "side": "top"},
     ]
 
-
-
-    answers = get_document_answers(file_path, questions)
-    print(answers)
-    document_params = analyze_and_save_parameters(answers)
+    answers = get_document_answers(file_path, questions) #получае словарь ответов
+    # print(answers) 
+    document_params = analyze_and_save_parameters(questions, answers)
     print_document_params(document_params)
-
-    # while True:
-    #     user_input = input("Задайте вопрос или введите 'exit' для выхода: ")
-    #     if user_input.lower() == 'exit':
-    #         break
 
 if __name__ == "__main__":
     main()

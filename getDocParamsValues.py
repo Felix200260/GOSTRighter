@@ -3,6 +3,8 @@
 import re
 
 def extract_font_size(text):
+    if not text:
+        raise ValueError("Пустой текст ответа не может быть обработан")
     # Извлечь все числовые значения из текста
     numbers = re.findall(r'\d+', text)
     if not numbers:
@@ -21,6 +23,8 @@ def extract_font_size(text):
         return 12  # Возвращаем значение по умолчанию, если среднее значение вне допустимого диапазона
 
 def extract_indent_size(text):
+    if not text:
+        raise ValueError("Пустой текст ответа не может быть обработан")
     # Извлечь все числовые значения из текста, которые могут относиться к отступам
     numbers = re.findall(r'\d+', text)  # Находим все числовые значения
     if not numbers:
@@ -38,12 +42,60 @@ def extract_indent_size(text):
     else:
         return 1.25  # Возвращаем значение по умолчанию, если среднее значение вне допустимого диапазона
 
+def extract_margin_size(text, side):
+    if not text:
+        raise ValueError("Пустой текст ответа не может быть обработан")
 
-def analyze_and_save_parameters(answers):
+    # Извлекаем числовые значения, которые могут относиться к размерам полей
+    numbers = re.findall(r'\d+', text)
+    if not numbers:
+        return 20  # Возвращаем значение по умолчанию, если числа не найдены
+
+    # Преобразование найденных строк в целые числа
+    numbers = [int(num) for num in numbers]
+
+    # Вычисление среднего значения размеров полей
+    number_average = sum(numbers) / len(numbers)
+
+    # Проверка на приемлемый диапазон значений полей
+    if 10 <= number_average <= 50:  # Предполагаем диапазон от 10 мм до 50 мм для полей
+        return round(number_average)
+    else:
+        return 20  # Возвращаем значение по умолчанию, если среднее значение вне допустимого диапазона
+
+def handle_font_size(question, answer):
+    return extract_font_size(answer)
+
+def handle_indent_size(question, answer):
+    return extract_indent_size(answer)
+
+def handle_margin_size(question, answer, side):
+    return extract_margin_size(answer, side)
+
+def process_question(question_info, answer):
+    if question_info["type"] == "font_size":
+        return handle_font_size(question_info["text"], answer)
+    elif question_info["type"] == "indent_size":
+        return handle_indent_size(question_info["text"], answer)
+    elif question_info["type"] == "margin_size":
+        return handle_margin_size(question_info["text"], answer, question_info["side"])
+    else:
+        print(f"Неизвестный тип вопроса: {question_info['type']}")
+
+
+def analyze_and_save_parameters(questions, answers):
     params = {}
-    for question, answer in answers.items():
-        if "шрифт" in question:
-            params['font_size'] = extract_font_size(answer)
-        elif "отступы" in question:
-            params['indent_size'] = extract_indent_size(answer)
+    for question_info in questions:
+        question_text = question_info["text"]
+        question_type = question_info["type"]
+        answer = answers.get(question_text, "")
+
+        if question_type == "font_size":
+            params['font_size'] = handle_font_size(question_text, answer)
+        elif question_type == "indent_size":
+            params['indent_size'] = handle_indent_size(question_text, answer)
+        elif question_type == "margin_size":
+            side = question_info["side"]
+            params[f"margin_size_{side}"] = handle_margin_size(question_text, answer, side)
+
     return params

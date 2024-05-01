@@ -1,2 +1,9 @@
+.env
+
+# Игнорировать тестовые файлы и Jupyter файлы
+test*.py
+test*.ipynb
+
+# Игнорировать кэш Python
 __pycache__/
 *.pyc
