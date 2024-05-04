@@ -7,3 +7,7 @@ test*.ipynb
 # Игнорировать кэш Python
 __pycache__/
 *.pyc
+
+# Игнорировать папки tests/ и .vscode/
+tests/
+.vscode/
