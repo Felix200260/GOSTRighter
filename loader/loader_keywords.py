@@ -1,4 +1,5 @@
 import os
+from icecream import ic
 
 # Путь к папке с файлами ключевых слов
 KEYWORD_FOLDER = 'source'
@@ -20,7 +21,6 @@ def load_keywords():
     
     keywords = {}
     for key, path in keyword_files.items():
-        print(path)
         keywords[key] = read_keywords(path)
-    print(keywords)
+        ic(keywords)
     return keywords
