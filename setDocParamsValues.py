@@ -5,7 +5,6 @@ from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 
 def set_doc_params_values(document, font_size=12, first_line_indent=1.25, line_spacing=1.5):
-# TODO rename function to gost_7_32_2017
     style = document.styles['Normal']
     font = style.font
     font.name = 'Times New Roman'

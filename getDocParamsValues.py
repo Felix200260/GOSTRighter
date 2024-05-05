@@ -27,7 +27,6 @@ def extract_margin_size(text, side):
         print(f"Нет информации для этой стороны: {side}")
         print(f"Установлено значение по умолчанию: {20}")
         return 20  # Возвращает значение по умолчанию, если нет данных для обработки
-    # FIXME: определить почему постоянно ValueError
     numbers = re.findall(r'\d+', text)
     if not numbers:
         return 20
