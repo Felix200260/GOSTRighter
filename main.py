@@ -5,7 +5,7 @@ import sys
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from loader.loader_document import load_and_split_documents
-from getDocParamsValues import  analyze_and_save_parameters, find_font_name
+from getDocParamsValues import  analyze_and_save_parameters, extract_font_names
 from config import model_config
 from langchain.chains.question_answering import load_qa_chain
 
@@ -31,25 +31,26 @@ def get_document_answers(file_path, questions):
         docs = faiss_index.similarity_search(query_text)
         input_dict = {
             'input_documents': docs,
-            'question': query_text  # Используем текст запроса
+            'question': query_text
         }
         result = chain.invoke(input=input_dict)
-        answers[query_text] = result['output_text']  # Используем query_text как ключ
-        print(query_text + ": " + result['output_text'])
+        answer = result['output_text']
+        answers[query_text] = answer
+        print(query_text + ": " + answer)
 
-        # Поиск названия шрифта в ответе
-        find_font_name(answer)
     return answers
+
 
 def prepare_questions():
     keywords = load_keywords()  # Загрузка ключевых слов для каждого типа источника
     questions = [
         # {"text": "Какой размер шрифта следует использовать в этом документе?", "type": "font_size"},
+        {"text": "Какие шрифты рекомендуются для использования в этом документе?", "type": "font_recommendation"},
         # {"text": "Какие отступы следует использовать в этом документе?", "type": "indent_size"},
-        {"text": "Какой размер поля должен быть в документе слева?", "type": "margin_size", "side": "left"},
-        {"text": "Какой размер поля должен быть в документе справа?", "type": "margin_size", "side": "right"},
-        {"text": "Какой размер поля должен быть в документе снизу?", "type": "margin_size", "side": "bottom"},
-        {"text": "Какой размер поля должен быть в документе сверху?", "type": "margin_size", "side": "top"},
+        # {"text": "Какой размер поля должен быть в документе слева?", "type": "margin_size", "side": "left"},
+        # {"text": "Какой размер поля должен быть в документе справа?", "type": "margin_size", "side": "right"},
+        # {"text": "Какой размер поля должен быть в документе снизу?", "type": "margin_size", "side": "bottom"},
+        # {"text": "Какой размер поля должен быть в документе сверху?", "type": "margin_size", "side": "top"},
         # TODO: Нужно сделать доп функционал для источников другого типа (не только electronic): 
         # {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
     ]
@@ -83,14 +84,23 @@ def print_document_params(doc_params):
         else:
             print(f"Размер поля {side} не указан.")
 
+        # Вывод рекомендуемых шрифтов
+    if 'recommended_fonts' in doc_params and doc_params['recommended_fonts']:
+        print("Рекомендуемые шрифты:", ', '.join(doc_params['recommended_fonts']))
+    else:
+        print("Рекомендуемые шрифты не указаны.")
+
 def main():
     model = ChatOpenAI(**model_config)
-
     file_path = r"C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf"
-    questions = prepare_questions()  # Получение подготовленного списка вопросов с ключевыми словами
-
-    answers = get_document_answers(file_path, questions) #получаем словарь ответов
+    questions = prepare_questions()
+    answers = get_document_answers(file_path, questions)
     document_params = analyze_and_save_parameters(questions, answers)
+    
+    # Извлечение и сохранение рекомендуемых шрифтов
+    recommended_fonts = extract_font_names(answers.get("Какие шрифты рекомендуются для использования в этом документе?", ""))
+    document_params['recommended_fonts'] = recommended_fonts
+    
     print_document_params(document_params)
 
 

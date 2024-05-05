@@ -35,16 +35,10 @@ def extract_margin_size(text, side):
     return round(number_average) if 10 <= number_average <= 50 else 20
 
 
-def find_font_name(text):
-    # Этот шаблон регулярного выражения ищет упоминание "Times New Roman"
-    font_pattern = re.compile(r"\bTimes New Roman\b", re.IGNORECASE)
-    search_result = font_pattern.search(text)
-    if search_result:
-        print("Найден шрифт: Times New Roman")
-        return "Times New Roman"
-    else:
-        print("Шрифт Times New Roman не найден.")
-        return None
+def extract_font_names(answer):
+    # Регулярное выражение для поиска шрифтов, пример: Times New Roman, Arial и т.д.
+    font_names = re.findall(r'([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)', answer)
+    return font_names
 
 
 def analyze_and_save_parameters(questions, answers):
