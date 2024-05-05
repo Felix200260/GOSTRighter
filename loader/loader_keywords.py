@@ -22,5 +22,4 @@ def load_keywords():
     keywords = {}
     for key, path in keyword_files.items():
         keywords[key] = read_keywords(path)
-        ic(keywords)
     return keywords

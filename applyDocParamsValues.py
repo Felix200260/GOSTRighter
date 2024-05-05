@@ -1,2 +1,0 @@
-#applyDocParamsValues.py
-
