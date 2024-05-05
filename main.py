@@ -12,6 +12,10 @@ from langchain.chains.question_answering import load_qa_chain
 from loader.loader_keywords import load_keywords
 
 from icecream import ic
+from docx import Document
+
+from setDocParamsValues import apply_document_params
+
 
 def get_document_answers(file_path, questions):
     texts = load_and_split_documents(file_path)
@@ -88,6 +92,11 @@ def print_document_params(doc_params):
         print("Рекомендуемые шрифты:", ', '.join(doc_params['recommended_fonts']))
     else:
         print("Рекомендуемые шрифты не указаны.")
+    
+    # временная функция 
+# Функция для открытия документа, перемещена на глобальный уровень
+def open_document(file_path):
+    os.startfile(file_path)
 
 def main():
     model = ChatOpenAI(**model_config)
@@ -96,8 +105,13 @@ def main():
     answers = get_document_answers(file_path, questions)
     document_params = analyze_and_save_parameters(questions, answers)    
     print_document_params(document_params)
-
+    
+    # Путь к документу Word, который нужно изменить
+    doc_path = 'C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/tests/word/testFileWord.docx'
+    modified_doc_path = apply_document_params(doc_path, document_params)
+    
+    # Открыть модифицированный документ
+    open_document(modified_doc_path)
 
 if __name__ == "__main__":
     main()
-
