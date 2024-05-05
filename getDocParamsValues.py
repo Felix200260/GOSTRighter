@@ -50,8 +50,9 @@ def analyze_and_save_parameters(questions, answers):
         answer = answers.get(question_text, "")  # Используйте текст вопроса как ключ для получения ответа
         if question_type == "font_size":
             params['font_size'] = extract_font_size(answer)
-        elif question_type == "indent_size":
-            params['indent_size'] = extract_indent_size(answer)
+        elif question_type == "font_recommendation":
+            # Извлекаем и сохраняем рекомендуемые шрифты
+            params['recommended_fonts'] = extract_font_names(answer)
         elif question_type == "margin_size":
             params[f"margin_size_{question_info['side']}"] = extract_margin_size(answer, question_info["side"])
     return params

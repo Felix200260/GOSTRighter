@@ -58,7 +58,6 @@ def prepare_questions():
     return questions
     # TODO: Реализовать загрузку Word файлов
     # TODO: Узнать есть ли боблиотки, которые загружают разные расширения файлов и достают от туда текст
-    # TODO: Реализовать поиск названия шрифта 'Times New Roman'
     # TODO: Реализовать 
 
 
@@ -95,12 +94,7 @@ def main():
     file_path = r"C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf"
     questions = prepare_questions()
     answers = get_document_answers(file_path, questions)
-    document_params = analyze_and_save_parameters(questions, answers)
-    
-    # Извлечение и сохранение рекомендуемых шрифтов
-    recommended_fonts = extract_font_names(answers.get("Какие шрифты рекомендуются для использования в этом документе?", ""))
-    document_params['recommended_fonts'] = recommended_fonts
-    
+    document_params = analyze_and_save_parameters(questions, answers)    
     print_document_params(document_params)
 
 
