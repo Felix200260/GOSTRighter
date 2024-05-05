@@ -5,7 +5,7 @@ import sys
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from loader.loader_document import load_and_split_documents
-from getDocParamsValues import  analyze_and_save_parameters
+from getDocParamsValues import  analyze_and_save_parameters, find_font_name
 from config import model_config
 from langchain.chains.question_answering import load_qa_chain
 
@@ -36,6 +36,9 @@ def get_document_answers(file_path, questions):
         result = chain.invoke(input=input_dict)
         answers[query_text] = result['output_text']  # Используем query_text как ключ
         print(query_text + ": " + result['output_text'])
+
+        # Поиск названия шрифта в ответе
+        find_font_name(answer)
     return answers
 
 def prepare_questions():
