@@ -48,15 +48,15 @@ def get_document_answers(file_path, questions):
 def prepare_questions():
     keywords = load_keywords()  # Загрузка ключевых слов для каждого типа источника
     questions = [
-        # {"text": "Какой размер шрифта следует использовать в этом документе?", "type": "font_size"},
-        # {"text": "Какие шрифты рекомендуются для использования в этом документе?", "type": "font_recommendation"},
-        # {"text": "Какие отступы следует использовать в этом документе?", "type": "indent_size"},
+        {"text": "Какой размер шрифта следует использовать в этом документе?", "type": "font_size"},
+        {"text": "Какие шрифты рекомендуются для использования в этом документе?", "type": "font_recommendation"},
+        {"text": "Какие отступы следует использовать в этом документе?", "type": "indent_size"},
         {"text": "Какой размер поля должен быть в документе слева?", "type": "margin_size", "side": "left"},
         {"text": "Какой размер поля должен быть в документе справа?", "type": "margin_size", "side": "right"},
         {"text": "Какой размер поля должен быть в документе снизу?", "type": "margin_size", "side": "bottom"},
         {"text": "Какой размер поля должен быть в документе сверху?", "type": "margin_size", "side": "top"},
         # TODO: Нужно сделать доп функционал для источников другого типа (не только electronic): 
-        # {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
+        {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
     ]
     # TODO: Реализовать задавание вопросов по поводу рисунков
     return questions

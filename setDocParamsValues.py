@@ -2,6 +2,8 @@ from docx import Document
 from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 
+from file_utils import generate_unique_filename  # Импорт функции из file_utils.py
+
 def set_doc_params_values(document, font_size, indent_size, line_spacing, font_name):
     style = document.styles['Normal']
     font = style.font
@@ -43,7 +45,7 @@ def apply_document_params(doc_path, params):
         font_name=font_name
     )
 
-    modified_path = doc_path.replace('.docx', '_modified.docx')
+    modified_path = generate_unique_filename(doc_path)  # Используем нашу функцию для генерации уникального имени файла
     doc.save(modified_path)
     print(f"Документ сохранен как {modified_path}")
 
