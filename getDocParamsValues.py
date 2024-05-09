@@ -46,17 +46,28 @@ def extract_font_names(answer):
     return font_names
 
 def analyze_and_save_parameters(questions, answers):
-    print("Answers dictionary:", answers)
     params = {}
     for question_info in questions:
-        question_text = question_info["text"]
-        question_type = question_info["type"]
-        answer = answers.get(question_text, "")  # Используйте текст вопроса как ключ для получения ответа
+        question_text = question_info['text']
+        question_type = question_info['type']
+        answer = answers.get(question_text, "")
+        
+        print(f"Вопрос: '{question_text}'")
+        print(f"Ответ: '{answer}'\n")  # \n добавляет дополнительную пустую строку для разделения групп вопрос-ответ
+
         if question_type == "font_size":
             params['font_size'] = extract_font_size(answer)
         elif question_type == "font_recommendation":
-            # Извлекаем и сохраняем рекомендуемые шрифты
             params['recommended_fonts'] = extract_font_names(answer)
-        elif question_type == "margin_size":
-            params[f"margin_size_{question_info['side']}"] = extract_margin_size(answer, question_info["side"])
+        elif question_type == "indent_size":
+            params['indent_size'] = extract_indent_size(answer)
+        elif question_type.startswith("margin_size"):
+            side = question_type.split("_")[-1]
+            margin_size = extract_margin_size(answer, side)
+            params[f"margin_size_{side}"] = margin_size  # Проверьте правильность этой строки
+            print(f"Размер поля {side}: {margin_size} мм")  # Отладка извлечения размеров полей
+
+    print("Полученные параметры:", params)  # Отладочный вывод всех параметров
     return params
+
+

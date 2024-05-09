@@ -48,15 +48,15 @@ def get_document_answers(file_path, questions):
 def prepare_questions():
     keywords = load_keywords()  # Загрузка ключевых слов для каждого типа источника
     questions = [
-        # {"text": "Какой размер шрифта следует использовать в этом документе?", "type": "font_size"},
+        {"text": "Какой размер шрифта следует использовать в этом документе?", "type": "font_size"},
         {"text": "Какие шрифты рекомендуются для использования в этом документе?", "type": "font_recommendation"},
-        # {"text": "Какие отступы следует использовать в этом документе?", "type": "indent_size"},
-        # {"text": "Какой размер поля должен быть в документе слева?", "type": "margin_size", "side": "left"},
-        # {"text": "Какой размер поля должен быть в документе справа?", "type": "margin_size", "side": "right"},
-        # {"text": "Какой размер поля должен быть в документе снизу?", "type": "margin_size", "side": "bottom"},
-        # {"text": "Какой размер поля должен быть в документе сверху?", "type": "margin_size", "side": "top"},
+        {"text": "Какие отступы следует использовать в этом документе?", "type": "indent_size"},
+        {"text": "Какой размер поля должен быть в документе слева?", "type": "margin_size", "side": "left"},
+        {"text": "Какой размер поля должен быть в документе справа?", "type": "margin_size", "side": "right"},
+        {"text": "Какой размер поля должен быть в документе снизу?", "type": "margin_size", "side": "bottom"},
+        {"text": "Какой размер поля должен быть в документе сверху?", "type": "margin_size", "side": "top"},
         # TODO: Нужно сделать доп функционал для источников другого типа (не только electronic): 
-        # {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
+        {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
     ]
     # TODO: Реализовать задавание вопросов по поводу рисунков
     return questions
@@ -68,30 +68,17 @@ def prepare_questions():
 
 def print_document_params(doc_params):
     print("---Параметры документа---")
-    if 'font_size' in doc_params and doc_params['font_size'] is not None:
-        print(f"Размер шрифта: {doc_params['font_size']}")
-    else:
-        print("Размер шрифта не указан.")
+    print(f"Размер шрифта: {doc_params.get('font_size', 'не указан')}")
+    print(f"Размер отступа: {doc_params.get('indent_size', 'не указан')}")
 
-    if 'indent_size' in doc_params and doc_params['indent_size'] is not None:
-        print(f"Размер отступа: {doc_params['indent_size']}")
-    else:
-        print("Размер отступа не указан.")
+    # Печать размеров полей
+    for side in ['left', 'right', 'top', 'bottom']:
+        key = f"margin_size_{side}"
+        print(f"Размер поля {side}: {doc_params.get(key, 'не указан')} мм")
 
-        # Печать размеров полей
-    sides = ['left', 'right', 'top', 'bottom']
-    for side in sides:
-        key = f'margin_size_{side}'
-        if key in doc_params and doc_params[key] is not None:
-            print(f"Размер поля {side}: {doc_params[key]} мм")
-        else:
-            print(f"Размер поля {side} не указан.")
+    # Вывод рекомендуемых шрифтов
+    print("Рекомендуемые шрифты:", ', '.join(doc_params.get('recommended_fonts', ['не указаны'])))
 
-        # Вывод рекомендуемых шрифтов
-    if 'recommended_fonts' in doc_params and doc_params['recommended_fonts']:
-        print("Рекомендуемые шрифты:", ', '.join(doc_params['recommended_fonts']))
-    else:
-        print("Рекомендуемые шрифты не указаны.")
     
     # временная функция 
 # Функция для открытия документа, перемещена на глобальный уровень
@@ -103,12 +90,12 @@ def main():
     file_path = r"C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf"
     questions = prepare_questions()
     answers = get_document_answers(file_path, questions)
-    document_params = analyze_and_save_parameters(questions, answers)    
+    document_params = analyze_and_save_parameters(questions, answers) # пример получаемых данных {'font_size': 12, 'first_line_indent': 1.25, 'line_spacing': 1.5, 'font_name': 'Times New Roman'} 
     print_document_params(document_params)
     
     # Путь к документу Word, который нужно изменить
     doc_path = 'C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/tests/word/testFileWord.docx'
-    modified_doc_path = apply_document_params(doc_path, document_params)
+    modified_doc_path = apply_document_params(doc_path, document_params) # передаём: {'font_size': 12, 'first_line_indent': 1.25, 'line_spacing': 1.5, 'font_name': 'Times New Roman'}
     
     # Открыть модифицированный документ
     open_document(modified_doc_path)
