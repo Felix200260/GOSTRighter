@@ -47,9 +47,10 @@ def extract_font_names(answer):
 
 def analyze_and_save_parameters(questions, answers):
     params = {}
-    for question_info in questions:
-        question_text = question_info['text']
-        question_type = question_info['type']
+    for question_info in questions: # questions имеет вид: [{'text': 'Размер шрифта', 'type': 'font_size'}, {'text': 'Шрифт', 'type': 'font_recommendation'}, {'text': 'Отступ', 'type': 'indent_size'}]
+        question_text = question_info['text'] # 'Размер шрифта' 'Шрифт' 'Отступ'
+        question_type = question_info['type'] # font_size font_recommendation indent_size
+        side = question_info.get('side', 'unknown')  # Получаем 'side' если он есть
         answer = answers.get(question_text, "")
         
         print(f"Вопрос: '{question_text}'")
@@ -61,13 +62,13 @@ def analyze_and_save_parameters(questions, answers):
             params['recommended_fonts'] = extract_font_names(answer)
         elif question_type == "indent_size":
             params['indent_size'] = extract_indent_size(answer)
-        elif question_type.startswith("margin_size"):
-            side = question_type.split("_")[-1]
+        elif question_type.startswith("margin_size"): # startswith - проверяет, начинается ли строка с указанного префикса Например: margin_size_top
             margin_size = extract_margin_size(answer, side)
-            params[f"margin_size_{side}"] = margin_size  # Проверьте правильность этой строки
-            print(f"Размер поля {side}: {margin_size} мм")  # Отладка извлечения размеров полей
+            params[f'margin_size_{side}'] = margin_size 
+            # print(f"Размер поля {side}: {margin_size} мм")  # Отладка извлечения размеров полей
 
     print("Полученные параметры:", params)  # Отладочный вывод всех параметров
     return params
+
 
 
