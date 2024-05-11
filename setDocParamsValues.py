@@ -12,6 +12,7 @@ def set_doc_params_values(document, font_size, indent_size, line_spacing, font_n
     font.italic = False
 
     print(f"Применен шрифт: {font.name}, размер шрифта: {font.size.pt}, курсив: {font.italic}")
+    
 
     for paragraph in document.paragraphs:
         paragraph.style = style
@@ -33,7 +34,7 @@ def apply_document_params(doc_path, params):
     indent_size = params.get('indent_size', 1.25)
     line_spacing = params.get('line_spacing', 1.5)  # Значение по умолчанию
     font_names = params.get('recommended_fonts', ['Times New Roman'])
-    font_name = font_names[0] if font_names else 'Times New Roman'  # Убедитесь, что font_name это строка
+    font_name = font_names[0] if font_names else 'Times New Roman'  # убеждаемся, что font_name это строка
 
     print(f"Получены такие параметры документа: шрифт {font_name}, размер шрифта {font_size}, отступ {indent_size}, межстрочный интервал {line_spacing}")
 
