@@ -1,6 +1,7 @@
 from docx import Document
 from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from docx.shared import Mm  # Импортируем Mm для работы с миллиметрами
 
 from file_utils import generate_unique_filename  # Импорт функции из file_utils.py
 
@@ -13,12 +14,12 @@ def set_doc_params_values(document, font_size, indent_size, line_spacing, font_n
 
     print(f"Применен шрифт: {font.name}, размер шрифта: {font.size.pt}, курсив: {font.italic}")
 
-    # Установка размеров полей документа
-    section = document.sections[0]  # Берем первую секцию документа
-    section.left_margin = Cm(margin_left)
-    section.right_margin = Cm(margin_right)
-    section.top_margin = Cm(margin_top)
-    section.bottom_margin = Cm(margin_bottom)
+     # Установка размеров полей документа в миллиметрах
+    section = document.sections[0]
+    section.left_margin = Mm(margin_left)
+    section.right_margin = Mm(margin_right)
+    section.top_margin = Mm(margin_top)
+    section.bottom_margin = Mm(margin_bottom)
 
     for paragraph in document.paragraphs:
         paragraph.style = style
@@ -46,10 +47,10 @@ def apply_document_params(doc_path, params):
     margin_bottom = params.get('margin_size_bottom', 2.0)  # значение по умолчанию для нижнего поля в см
 
     print(f"Получены такие параметры документа: шрифт {font_name}, размер шрифта {font_size}, отступ {indent_size}, межстрочный интервал {line_spacing}")
-    print(f"Размер поля left: {margin_left} см")
-    print(f"Размер поля right: {margin_right} см")
-    print(f"Размер поля top: {margin_top} см")
-    print(f"Размер поля bottom: {margin_bottom} см")
+    print(f"Размер поля left: {margin_left}")
+    print(f"Размер поля right: {margin_right}")
+    print(f"Размер поля top: {margin_top}")
+    print(f"Размер поля bottom: {margin_bottom}")
 
     set_doc_params_values(
         doc,
