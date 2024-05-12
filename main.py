@@ -16,6 +16,8 @@ from docx import Document
 
 from setDocParamsValues import apply_document_params
 
+import pprint
+
 
 def get_document_answers(file_path, questions):
     texts = load_and_split_documents(file_path)
@@ -40,7 +42,8 @@ def get_document_answers(file_path, questions):
         result = chain.invoke(input=input_dict)
         answer = result['output_text']
         answers[query_text] = answer
-        print(query_text + ": " + answer)
+        print(f'Вопрос: {query_text} \nОтвет: {answer}')
+        print(f'======================================')
 
     return answers
 
@@ -86,20 +89,59 @@ def print_document_params(doc_params):
 def open_document(file_path):
     os.startfile(file_path)
 
+def print_subheader(subheader, details=None):
+    """ Печатает подзаголовок внутри раздела и дополнительные детали если они есть """
+    print("\n" + "-" * 30)
+    print(f"{subheader}")
+    if details:
+        pprint.pprint(details, width=80, compact=True)  # Используем pprint для красивого вывода
+    print("-" * 30)
+
+def print_header(header):
+    """ Печатает заголовок раздела """
+    print("\n" + "=" * 50)
+    print(f"{header}")
+    print("=" * 50)
+
+def print_subheader(subheader, details=None):
+    """ Печатает подзаголовок внутри раздела и дополнительные детали, если они есть, с использованием pprint """
+    print("\n" + "-" * 30)
+    print(f"{subheader}")
+    if details:
+        pprint.pprint(details)  # details - список словарей с деталями indent - отступ, width - ширина
+    print("-" * 30)
+# indent=4, width=80
+
 def main():
+    print_header("Инициализация программы")
+    
+    print_subheader("Инициализация модели")
     model = ChatOpenAI(**model_config)
+
     file_path = r"C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf"
+    file_name = os.path.basename(file_path)
+    print_subheader("Загрузка документа", details=f"Анализируемый документ: {file_name}")
+
     questions = prepare_questions()
+    question_details = [{"text": q["text"], "type": q["type"]} for q in questions]
+    print_subheader("Получение вопросов", details=question_details)
+
+    print_subheader("Получение ответов на вопросы")
     answers = get_document_answers(file_path, questions)
-    document_params = analyze_and_save_parameters(questions, answers) # пример получаемых данных {'font_size': 12, 'first_line_indent': 1.25, 'line_spacing': 1.5, 'font_name': 'Times New Roman'} 
+
+    print_subheader("Анализ ответов и сохранение параметров")
+    document_params = analyze_and_save_parameters(questions, answers)
     print_document_params(document_params)
-    
-    # Путь к документу Word, который нужно изменить
+
     doc_path = 'C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/tests/word/testFileWord.docx'
-    modified_doc_path = apply_document_params(doc_path, document_params) # передаём: {'font_size': 12, 'first_line_indent': 1.25, 'line_spacing': 1.5, 'font_name': 'Times New Roman'}
-    
-    # Открыть модифицированный документ
+    doc_name = os.path.basename(doc_path)
+    print_subheader("Применение параметров к документу", details=f"Документ для изменений: {doc_name}")
+    modified_doc_path = apply_document_params(doc_path, document_params)
+
+    print_subheader("Сохранение измененного документа")
     open_document(modified_doc_path)
+    modified_doc_name = os.path.basename(modified_doc_path)
+    print(f"Документ сохранен как {modified_doc_name}")
 
 if __name__ == "__main__":
     main()

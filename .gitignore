@@ -11,6 +11,7 @@ __pycache__/
 # Игнорировать папки tests/ и .vscode/
 tests/
 .vscode/
+word/
 
 # Временный файл
 tempCodeRunnerFile.py 
