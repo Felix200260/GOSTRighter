@@ -2,6 +2,7 @@ from docx import Document
 from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.shared import Mm  # Импортируем Mm для работы с миллиметрами
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from file_utils import generate_unique_filename  # Импорт функции из file_utils.py
 
@@ -22,14 +23,23 @@ def set_doc_params_values(document, font_size, indent_size, line_spacing, font_n
     section.bottom_margin = Mm(margin_bottom)
 
     for paragraph in document.paragraphs:
+        # Применяем стиль Normal к параграфу
         paragraph.style = style
-        paragraph.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        # Выравниваем текст в параграфе по центру
+        # paragraph.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+        # Устанавливаем отступ слева
         paragraph.paragraph_format.left_indent = Cm(indent_size)
+        # Устанавливаем отступ справа в 0
         paragraph.paragraph_format.right_indent = Cm(0)
+        # Устанавливаем отступ первой строки
         paragraph.paragraph_format.first_line_indent = Cm(indent_size)
+        # Устанавливаем отступ сверху и снизу в 0
         paragraph.paragraph_format.space_before = Pt(0)
         paragraph.paragraph_format.space_after = Pt(0)
+        # Устанавливаем правило интервала между строками
         paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.MULTIPLE
+        # Устанавливаем значение интервала между строками
         paragraph.paragraph_format.line_spacing = line_spacing
 
 def apply_document_params(doc_path, params):
