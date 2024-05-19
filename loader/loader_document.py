@@ -5,7 +5,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 def load_and_split_documents(pdf_path):
     loader = PyPDFLoader(pdf_path)
+    #todo догирование
     pages = loader.load_and_split()
+    #todo догирование
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
@@ -15,7 +17,9 @@ def load_and_split_documents(pdf_path):
     )
 
     chunks = text_splitter.split_documents(pages) # чанки в виде массива (список объектов Document). Может ещё пригодиться
+    #todo догирование
     documents = text_splitter.split_documents(pages) #нужно тк в main.py функция from_texts принимает строку, а у нас изначально чанки в виде массива (список объектов Document).
+    #todo догирование
     # print(chunks)
     # type(chunks)
     # Извлекаем текст из каждого Document и возвращаем список строк
