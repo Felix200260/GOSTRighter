@@ -52,7 +52,7 @@ def prepare_questions():
     keywords = load_keywords()  # Загрузка ключевых слов для каждого типа источника
     questions = [
         {"text": "Какой минимальный размер шрифта используется в этом документе?", "type": "font_size"},
-        {"text": "Перечислиг рекомендуемые шрифты для этого документа.", "type": "font_recommendation"},
+        {"text": "Перечислите рекомендуемые шрифты для этого документа.", "type": "font_recommendation"},
         {"text": "Какой абзацный отступ следует использовать в этом документе?", "type": "indent_size"},
         {"text": "Какой размер поля должен быть в документе слева в миллиметрах?", "type": "margin_size", "side": "left"},
         {"text": "Какой размер поля должен быть в документе справа в миллиметрах?", "type": "margin_size", "side": "right"},
@@ -113,11 +113,8 @@ def print_subheader(subheader, details=None):
 # indent=4, width=80
 
 def main():
-    print_header("Инициализация программы")
+    print_header("Запуск программы")
     
-    print_subheader("Инициализация модели")
-    model = ChatOpenAI(**model_config)
-
     file_path = r"C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/pdf/7.32-2017.pdf"
     file_name = os.path.basename(file_path)
     print_subheader("Загрузка документа", details=f"Анализируемый документ: {file_name}")

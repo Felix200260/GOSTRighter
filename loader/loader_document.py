@@ -19,4 +19,4 @@ def load_and_split_documents(pdf_path):
     # print(chunks)
     # type(chunks)
     # Извлекаем текст из каждого Document и возвращаем список строк
-    return [doc.page_content for doc in documents]
+    return [doc.page_content for doc in documents] # Пример: ['Текст 1', 'Текст 2', 'Текст 3']
