@@ -21,12 +21,18 @@ def extract_indent_size(text):
     if not text:
         print("Пустой текст ответа: используем отступ по умолчанию", default_indent)
         return default_indent
-    numbers = re.findall(r'\d+', text)
+    
+    # Ищем числа с возможными запятыми или точками
+    numbers = re.findall(r'\d+[\.,]?\d*', text)
     if not numbers:
         print("Не найдены числовые значения: используем отступ по умолчанию", default_indent)
         return default_indent
-    number_average = sum([int(num) for num in numbers]) / len(numbers)
-    return round(number_average) if 0 <= number_average <= 55.87 else default_indent
+
+    # Преобразуем найденные числа в float и заменяем запятую на точку, если она есть
+    numbers = [float(num.replace(',', '.')) for num in numbers]
+    number_average = sum(numbers) / len(numbers)
+    
+    return round(number_average, 2) if 0 <= number_average <= 55.87 else default_indent
 
 def extract_margin_size(text, side):
     default_margin = 20

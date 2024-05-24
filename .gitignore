@@ -14,4 +14,7 @@ tests/
 word/
 
 # Временный файл
-tempCodeRunnerFile.py 
+tempCodeRunnerFile.py
+
+# Файлы для логирования
+*.log

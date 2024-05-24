@@ -1,12 +1,13 @@
+import os
 from docx import Document
 from docx.shared import Pt, Cm, Mm
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_PARAGRAPH_ALIGNMENT
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
 from file_utils import generate_unique_filename
 
 def set_doc_params_values(document, font_size, indent_size, line_spacing, font_name, margin_left, margin_right, margin_top, margin_bottom):
     # Устанавливаем параметры стиля для 'Normal'
     style = document.styles['Normal']
-    font = style.font
+    font = style.font # созданиен объекта Font для будующего приминения на 10,11,12 строке
     font.name = font_name
     font.size = Pt(font_size)
     font.italic = False
@@ -25,7 +26,6 @@ def set_doc_params_values(document, font_size, indent_size, line_spacing, font_n
         paragraph.style = style
 
         # Устанавливаем параметры шрифта для каждого параграфа
-        run = paragraph.runs
         for run in paragraph.runs:
             run.font.name = font_name
             run.font.size = Pt(font_size)
@@ -35,14 +35,13 @@ def set_doc_params_values(document, font_size, indent_size, line_spacing, font_n
         paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
 
         # Устанавливаем отступы
-        paragraph.paragraph_format.left_indent = Cm(indent_size)
-        paragraph.paragraph_format.right_indent = Cm(0)
-        paragraph.paragraph_format.first_line_indent = Cm(indent_size)
-        paragraph.paragraph_format.space_before = Pt(0)
-        paragraph.paragraph_format.space_after = Pt(0)
+        paragraph.paragraph_format.left_indent = Cm(0) # Отступы слева
+        paragraph.paragraph_format.right_indent = Cm(0) # Отступы справа
+        paragraph.paragraph_format.first_line_indent = Cm(indent_size) # красная строка
+        paragraph.paragraph_format.space_before = Pt(0) # Отступы перед
+        paragraph.paragraph_format.space_after = Pt(0) # Отступы после
 
         # Устанавливаем правило интервала между строками
-        paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.MULTIPLE
         paragraph.paragraph_format.line_spacing = line_spacing
 
 def apply_document_params(doc_path, params):

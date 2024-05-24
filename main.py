@@ -14,7 +14,7 @@ from loader.loader_keywords import load_keywords
 from icecream import ic
 from docx import Document
 
-from setDocParamsValues import apply_document_params
+from setDocParamsValues.setDocParamsValues import apply_document_params
 
 import pprint
 
