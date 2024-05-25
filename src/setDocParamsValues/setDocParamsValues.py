@@ -3,15 +3,7 @@ from docx import Document
 from docx.shared import Pt, Cm, Mm, RGBColor
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.oxml.ns import qn
-
-def generate_unique_filename(path):
-    base, ext = os.path.splitext(path)
-    count = 1
-    new_path = f"{base}_modified_{count}{ext}"
-    while os.path.exists(new_path):
-        count += 1
-        new_path = f"{base}_modified_{count}{ext}"
-    return new_path
+from file_utils import generate_unique_filename
 
 def apply_new_document_params(original_doc, font_size, indent_size, line_spacing, font_name, margin_left, margin_right, margin_top, margin_bottom):
     new_doc = Document()
@@ -59,7 +51,7 @@ def apply_new_document_params(original_doc, font_size, indent_size, line_spacing
             if run.element.xml.find('w:drawing') != -1:
                 new_paragraph = new_doc.add_paragraph()
                 new_paragraph.style = style
-                new_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                new_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
                 new_paragraph.paragraph_format.left_indent = Cm(0)
                 new_paragraph.paragraph_format.right_indent = Cm(0)
                 new_paragraph.paragraph_format.first_line_indent = Cm(indent_size)

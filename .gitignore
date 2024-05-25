@@ -9,7 +9,6 @@ __pycache__/
 *.pyc
 
 # Игнорировать папки tests/ и .vscode/
-tests/
 .vscode/
 word/
 
@@ -18,3 +17,17 @@ tempCodeRunnerFile.py
 
 # Файлы для логирования
 *.log
+
+# Игнорировать временные файлы pytest
+*.pytest_cache/
+
+# Игнорировать определенные файлы в папке tests
+tests/**/__pycache__/
+tests/**/.pytest_cache/
+
+# Исключить из игнорирования важные тестовые файлы
+!tests/answers_tests/
+!tests/questions_tests/
+!tests/test_setDocParamsValues/
+!tests/test_wordFiles/
+!tests/test_wordFilesResult/
