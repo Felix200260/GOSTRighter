@@ -15,6 +15,7 @@ from icecream import ic
 from docx import Document
 
 from setDocParamsValues.setDocParamsValues import apply_document_params
+from reference_formatter import process_document, open_documents
 
 import pprint
 
