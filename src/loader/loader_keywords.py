@@ -1,8 +1,7 @@
 import os
-from icecream import ic
 
 # Путь к папке с файлами ключевых слов
-KEYWORD_FOLDER = 'source'
+KEYWORD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'source')
 
 def read_keywords(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -11,7 +10,7 @@ def read_keywords(file_path):
 
 def load_keywords():
     keyword_files = {
-        'articles': os.path.join(KEYWORD_FOLDER, 'articles_in_journals_and_collections_key_word.txt'), # Ключ: articles, Значение: source\articles_in_journals_and_collections_key_word.txt
+        'articles': os.path.join(KEYWORD_FOLDER, 'articles_in_journals_and_collections_key_word.txt'),
         'books': os.path.join(KEYWORD_FOLDER, 'books_and_monographs.txt'),
         'conferences': os.path.join(KEYWORD_FOLDER, 'conference_materials_and_abstracts.txt'),
         'electronic': os.path.join(KEYWORD_FOLDER, 'electronic_resources.txt'),
