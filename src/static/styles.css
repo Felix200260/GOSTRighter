@@ -1,0 +1,59 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+}
+
+h1 {
+    margin-top: 30px;
+    font-size: 2.5em;
+    color: #343a40;
+}
+
+.form-group {
+    margin-top: 20px;
+}
+
+.navbar {
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.navbar-brand {
+    font-size: 50px;
+}
+
+/* Стилизация кастомного элемента загрузки файлов */
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+}
+
+.custom-file-upload:hover {
+    background-color: #0056b3;
+}
+
+#file-upload {
+    display: none;
+}
+
+/* Стилизация текстового блока в рамке */
+.border-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #e9ecef;
+    margin: 20px 0;
+}
+
+/* Стилизация блока чата */
+.chat-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    color: #ffffff;
+}

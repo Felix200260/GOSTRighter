@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Document Processing</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">GOSTRighter</a>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="text-center">Первый этап</h1>
+        <div class="text-center border-box">
+            Загрузите документ, который вы хотите отредактировать (пока поддерживается только PDF) 😢
+        </div>
+        <form action="/upload" method="post" enctype="multipart/form-data" class="mt-4">
+            <div class="form-group">
+                <label for="file-upload" class="custom-file-upload">
+                    <i class="fa fa-cloud-upload"></i> Загрузить файл
+                </label>
+                <input id="file-upload" type="file" class="form-control-file" name="file">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Преобразовать</button>
+        </form>
+        <!-- Новый блок для текстового поля и кнопки отправки -->
+        <div class="chat-box mt-5">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Спросите GR..." aria-label="Спросите AI о документе...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
