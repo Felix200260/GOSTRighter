@@ -11,7 +11,7 @@ def generation_format_question_for_ai(original_links, format_example):
     
     return answers
 
-def process_document(doc_path, original_links, format_example):
+def link_formatting(doc_path, original_links, format_example, temp_doc_path):
     doc = Document(doc_path)
     answers = generation_format_question_for_ai(original_links, format_example)  # Получаем отформатированные ссылки
 
@@ -19,6 +19,5 @@ def process_document(doc_path, original_links, format_example):
         for original, formatted in zip(original_links, answers):
             if original in paragraph.text:
                 paragraph.text = paragraph.text.replace(original, formatted)
-    new_doc_path = generate_unique_filename(doc_path)
-    doc.save(new_doc_path)
-    return new_doc_path
+    
+    doc.save(temp_doc_path)

@@ -107,11 +107,11 @@ def apply_document_params(doc_path, params):
         margin_bottom=margin_bottom
     )
 
-    modified_path = generate_unique_filename(doc_path)
-    new_doc.save(modified_path)
-    print(f"Документ сохранен как {modified_path}")
+    # modified_path = generate_unique_filename(doc_path)
+    new_doc.save(doc_path)
+    print(f"Документ сохранен как {doc_path}")
 
-    return modified_path
+    return doc_path
 
 if __name__ == "__main__":
     doc_path = r'C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/tests/word/testFileWord.docx'

@@ -3,9 +3,9 @@
 from datetime import datetime
 import os
 import re
-import sys
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
+from file_utils import generate_unique_filename
 from loader.loader_document import load_and_split_documents
 from getDocParamsValues import analyze_and_save_parameters
 from config import model_config
@@ -17,21 +17,21 @@ from icecream import ic
 from docx import Document
 
 from setDocParamsValues.setDocParamsValues import apply_document_params
-from reference_formatter import process_document
+from reference_formatter import link_formatting
 from getAnswearAndGetLink import get_document_answers_from_pdf, extract_links_from_document
 from pprint import pprint
 
 def prepare_questions():
     keywords = load_keywords()  # Загрузка ключевых слов для каждого типа источника
     questions = [
-        # {"text": "Какой минимальный размер шрифта используется в этом документе?", "type": "font_size"},
-        # {"text": "Перечислите рекомендуемые шрифты для этого документа.", "type": "font_recommendation"},
-        # {"text": "Какой абзацный отступ следует использовать в этом документе?", "type": "indent_size"},
-        # {"text": "Какой размер поля должен быть в документе слева в миллиметрах?", "type": "margin_size", "side": "left"},
-        # {"text": "Какой размер поля должен быть в документе справа в миллиметрах?", "type": "margin_size", "side": "right"},
-        # {"text": "Какой размер поля должен быть в документе снизу в миллиметрах?", "type": "margin_size", "side": "bottom"},
-        # {"text": "Какой размер поля должен быть в документе сверху в миллиметрах?", "type": "margin_size", "side": "top"},
-        # {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
+        {"text": "Какой минимальный размер шрифта используется в этом документе?", "type": "font_size"},
+        {"text": "Перечислите рекомендуемые шрифты для этого документа.", "type": "font_recommendation"},
+        {"text": "Какой абзацный отступ следует использовать в этом документе?", "type": "indent_size"},
+        {"text": "Какой размер поля должен быть в документе слева в миллиметрах?", "type": "margin_size", "side": "left"},
+        {"text": "Какой размер поля должен быть в документе справа в миллиметрах?", "type": "margin_size", "side": "right"},
+        {"text": "Какой размер поля должен быть в документе снизу в миллиметрах?", "type": "margin_size", "side": "bottom"},
+        {"text": "Какой размер поля должен быть в документе сверху в миллиметрах?", "type": "margin_size", "side": "top"},
+        {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
     ]
     return questions
 
@@ -85,13 +85,13 @@ def generation_format_question_for_ai(original_links, format_example):
     # Подготовка вопросов для ИИ
     current_date = datetime.now().strftime('%d.%m.%Y')
     questions = [{"text": f"Отформатируй эту ссылку: {ref} по примеру: {format_example}"} for ref in original_links]
-    answers = get_document_answers("", questions)  # Путь файла не важен здесь
+    answers = get_document_answers_from_pdf("", questions)  
 
     # Обрабатываем полученные ответы, чтобы они соответствовали нашему формату
     formatted_references = []
     for ref, answer in zip(original_links, answers.values()):
         formatted_reference = answer.replace("http://example.com/resource", ref)
-        formatted_reference = re.sub(r'\(дата обращения \d{2}\.\d{2}\.\д{4}\)', f'(дата обращения {current_date})', formatted_reference)
+        formatted_reference = re.sub(r'\(дата обращения \d{2}\.\д{2}\.\д{4}\)', f'(дата обращения {current_date})', formatted_reference)
         formatted_references.append(formatted_reference)
     
     return formatted_references
@@ -115,19 +115,20 @@ def main():
     document_params = analyze_and_save_parameters(questions, answers)
     print_document_params(document_params)
 
-    # doc_path = 'C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/tests/word/testFileWord.docx'
     doc_path = 'C:/Users/felix/YandexDisk-korchevskyfelix/Programming/Programming/Python/GOSTRighter/tests/test_setDocParamsValues/test_wordFiles/testFileWord.docx'
     doc = Document(doc_path)
 
-    # skdnksafnbkfaenbknknkbnksa
     original_links = extract_links_from_document(doc)
     print(f"Найдено ссылок: {len(original_links)}")
 
     reference_format_example = answers.get("Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления")
-    formatted_doc_path = process_document(doc_path, original_links, reference_format_example)
-
-    print_subheader("Применение параметров к документу", details=f"Документ для изменений: {formatted_doc_path}")
-    final_doc_path = apply_document_params(formatted_doc_path, document_params)
+    
+    # Сначала отредактируем документ и сохраним его во временный файл
+    temp_doc_path = generate_unique_filename(doc_path)
+    link_formatting(doc_path, original_links, reference_format_example, temp_doc_path)
+    
+    # Затем применим параметры к отредактированному документу и сохраним итоговый документ
+    final_doc_path = apply_document_params(temp_doc_path, document_params)
     print(f"Документ окончательно обработан и сохранен как {final_doc_path}")
 
     print_subheader("Сохранение измененного документа")
