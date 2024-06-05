@@ -24,14 +24,14 @@ from pprint import pprint
 def prepare_questions():
     keywords = load_keywords()  # Загрузка ключевых слов для каждого типа источника
     questions = [
-        {"text": "Какой минимальный размер шрифта используется в этом документе?", "type": "font_size"},
-        {"text": "Перечислите рекомендуемые шрифты для этого документа.", "type": "font_recommendation"},
-        {"text": "Какой абзацный отступ следует использовать в этом документе?", "type": "indent_size"},
-        {"text": "Какой размер поля должен быть в документе слева в миллиметрах?", "type": "margin_size", "side": "left"},
-        {"text": "Какой размер поля должен быть в документе справа в миллиметрах?", "type": "margin_size", "side": "right"},
-        {"text": "Какой размер поля должен быть в документе снизу в миллиметрах?", "type": "margin_size", "side": "bottom"},
-        {"text": "Какой размер поля должен быть в документе сверху в миллиметрах?", "type": "margin_size", "side": "top"},
-        {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
+        # {"text": "Какой минимальный размер шрифта используется в этом документе?", "type": "font_size"},
+        # {"text": "Перечислите рекомендуемые шрифты для этого документа.", "type": "font_recommendation"},
+        # {"text": "Какой абзацный отступ следует использовать в этом документе?", "type": "indent_size"},
+        # {"text": "Какой размер поля должен быть в документе слева в миллиметрах?", "type": "margin_size", "side": "left"},
+        # {"text": "Какой размер поля должен быть в документе справа в миллиметрах?", "type": "margin_size", "side": "right"},
+        # {"text": "Какой размер поля должен быть в документе снизу в миллиметрах?", "type": "margin_size", "side": "bottom"},
+        # {"text": "Какой размер поля должен быть в документе сверху в миллиметрах?", "type": "margin_size", "side": "top"},
+        # {"text": "Как следует оформлять ссылки на электронных ресурсов согласно ГОСТа? Приведи пример оформления", "type": "source", "subtype": "electronic", "keywords": keywords['electronic']}
     ]
     return questions
 
@@ -134,6 +134,23 @@ def main():
     open_document(final_doc_path)
     modified_doc_name = os.path.basename(final_doc_path)
     print(f"Документ сохранен как {modified_doc_name}")
+
+    # Начало интерактивного режима
+    print_subheader("Интерактивный режим: вопросы и ответы")
+    texts = load_and_split_documents(file_path)
+    embeddings = OpenAIEmbeddings()
+    faiss_index = FAISS.from_texts(texts, embeddings)
+
+    while True:
+        user_input = input("Задайте вопрос или введите 'exit' для выхода: ")
+        if user_input.lower() == 'exit':
+            break
+
+        docs = faiss_index.similarity_search(user_input, k=1)
+        if docs:
+            print("---Ответ из документа:", '\n', docs[0].page_content[:300])
+        else:
+            print("Информация по вашему запросу в документе не найдена.")
 
 if __name__ == "__main__":
     main()
