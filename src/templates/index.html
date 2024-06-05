@@ -18,12 +18,17 @@
         <div class="text-center border-box">
             Загрузите документ, который вы хотите отредактировать (пока поддерживается только PDF) 😢
         </div>
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
         <form action="/upload" method="post" enctype="multipart/form-data" class="mt-4">
             <div class="form-group">
                 <label for="file-upload" class="custom-file-upload">
                     <i class="fa fa-cloud-upload"></i> Загрузить файл
                 </label>
-                <input id="file-upload" type="file" class="form-control-file" name="file">
+                <input id="file-upload" type="file" class="form-control-file" name="file" accept=".pdf" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Преобразовать</button>
         </form>
