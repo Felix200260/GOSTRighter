@@ -32,9 +32,8 @@
                 <label for="file-upload" class="custom-file-upload">
                     <i class="fa fa-cloud-upload"></i> Выберите файл
                 </label>
-                <input id="file-upload" type="file" class="form-control-file" name="file" accept=".pdf" required>
+                <input id="file-upload" type="file" class="form-control-file" name="file" accept=".pdf" required onchange="this.form.submit()">
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Загрузить</button>
         </form>
         {% if session.get('file_uploaded') %}
         <button id="convert-button" class="btn btn-primary btn-block mt-4">Преобразовать</button>
