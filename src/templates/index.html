@@ -18,24 +18,31 @@
         <div class="text-center border-box">
             Загрузите документ, который вы хотите отредактировать (пока поддерживается только PDF) 😢
         </div>
-        {% if error %}
-        <div class="alert alert-danger" role="alert">
-            {{ error }}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} mt-4" role="alert">
+            {{ message }}
         </div>
+        {% endfor %}
         {% endif %}
-        <form action="/upload" method="post" enctype="multipart/form-data" class="mt-4">
+        {% endwith %}
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data" class="mt-4">
             <div class="form-group">
                 <label for="file-upload" class="custom-file-upload">
-                    <i class="fa fa-cloud-upload"></i> Загрузить файл
+                    <i class="fa fa-cloud-upload"></i> Выберите файл
                 </label>
                 <input id="file-upload" type="file" class="form-control-file" name="file" accept=".pdf" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Преобразовать</button>
+            <button type="submit" class="btn btn-primary btn-block">Загрузить</button>
         </form>
+        {% if session.get('file_uploaded') %}
+        <button id="convert-button" class="btn btn-primary btn-block mt-4">Преобразовать</button>
+        {% endif %}
         <!-- Новый блок для текстового поля и кнопки отправки -->
         <div class="chat-box mt-5">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Спросите GR..." aria-label="Спросите AI о документе...">
+                <input type="text" class="form-control" placeholder="Спросите GostChat..." aria-label="Спросите GostChat...">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="button">Отправить</button>
                 </div>

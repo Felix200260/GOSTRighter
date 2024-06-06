@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.utils import secure_filename
 import os
 
@@ -17,21 +17,21 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
+        flash('No file part', 'danger')
+        return redirect(url_for('index'))
     file = request.files['file']
     if file.filename == '':
-        flash('No selected file')
-        return redirect(request.url)
+        flash('No selected file', 'danger')
+        return redirect(url_for('index'))
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # Здесь можно добавить логику обработки файла
-        flash('File successfully uploaded and processed')
+        flash('File successfully uploaded and processed', 'success')
+        session['file_uploaded'] = True
         return redirect(url_for('index'))
     else:
-        flash('Invalid file type. Only PDF files are allowed.')
-        return redirect(request.url)
+        flash('Invalid file type. Only PDF files are allowed.', 'danger')
+        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
