@@ -32,7 +32,7 @@
                 <label for="file-upload" class="custom-file-upload">
                     <i class="fa fa-cloud-upload"></i> Выберите файл
                 </label>
-                <input id="file-upload" type="file" class="form-control-file" name="file" accept=".pdf" required onchange="this.form.submit()">
+                <input id="file-upload" type="file" class="form-control-file" name="file" accept=".pdf, .docx" required onchange="this.form.submit()">
             </div>
         </form>
         <a href="{{ url_for('next_stage') }}" class="btn btn-primary btn-block mt-4">К следующему этапу</a>
