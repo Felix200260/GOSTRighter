@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'pdf/'  # Путь к папке для загрузки файлов
+app.config['UPLOAD_FOLDER'] = os.path.join('src', 'static', 'pdf')  # Путь к папке для загрузки файлов
 app.config['ALLOWED_EXTENSIONS'] = {'pdf'}
 app.secret_key = 'your_secret_key'  # Добавьте секретный ключ для работы с flash-сообщениями
 
@@ -12,7 +12,9 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    file_url = session.pop('file_url', None)
+    return render_template('index.html', file_url=file_url)
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -25,10 +27,17 @@ def upload_file():
         return redirect(url_for('index'))
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        flash('File successfully uploaded and processed', 'success')
-        session['file_uploaded'] = True
-        return redirect(url_for('index'))
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        try:
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+            file.save(file_path)
+            flash('File successfully uploaded and processed', 'success')
+            session['file_uploaded'] = True
+            session['file_url'] = url_for('static', filename=f'pdf/{filename}')
+            return redirect(url_for('index'))
+        except Exception as e:
+            flash(f'An error occurred while saving the file: {e}', 'danger')
+            return redirect(url_for('index'))
     else:
         flash('Invalid file type. Only PDF files are allowed.', 'danger')
         return redirect(url_for('index'))

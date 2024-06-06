@@ -38,6 +38,12 @@
         {% if session.get('file_uploaded') %}
         <button id="convert-button" class="btn btn-primary btn-block mt-4">Преобразовать</button>
         {% endif %}
+        {% if file_url %}
+        <div class="mt-4">
+            <h2>Загруженный документ:</h2>
+            <iframe src="{{ file_url }}" width="100%" height="600px"></iframe>
+        </div>
+        {% endif %}
         <!-- Новый блок для текстового поля и кнопки отправки -->
         <div class="chat-box mt-5">
             <div class="input-group">
