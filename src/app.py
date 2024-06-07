@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_socketio import SocketIO, emit
 from werkzeug.utils import secure_filename
 import os
 import subprocess
@@ -9,6 +10,7 @@ app.config['UPLOAD_FOLDER_WORD'] = os.path.join('src', 'static', 'word')
 app.config['ALLOWED_EXTENSIONS_PDF'] = {'pdf'}
 app.config['ALLOWED_EXTENSIONS_WORD'] = {'docx'}
 app.secret_key = 'your_secret_key'
+socketio = SocketIO(app)
 
 def clear_upload_folders():
     """Очистка папок загрузки."""
@@ -97,11 +99,31 @@ def process_files():
     """Обработка файлов с помощью скрипта main.py."""
     pdf_file_path = os.path.join(app.config['UPLOAD_FOLDER_PDF'], os.path.basename(session.get('pdf_file_url', '')))
     word_file_path = os.path.join(app.config['UPLOAD_FOLDER_WORD'], os.path.basename(session.get('word_file_url', '')))
+    
     try:
-        # Запуск скрипта main.py
-        result = subprocess.run(['python', 'src/main.py', pdf_file_path, word_file_path], capture_output=True, text=True)
+        with subprocess.Popen(
+            ['python', 'src/main.py', pdf_file_path, word_file_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            bufsize=1,
+            text=True
+        ) as process:
+            output = ""
+            for line in process.stdout:
+                output += line
+                socketio.emit('process_output', {'data': line})
+                print(line, end='')  # Вывод каждой строки в реальном времени в консоль
+            for line in process.stderr:
+                output += line
+                socketio.emit('process_output', {'data': line})
+                print(line, end='')  # Вывод ошибок в реальном времени в консоль
+            
+        if process.returncode != 0:
+            flash(f'An error occurred during processing: {output}', 'danger')
+            return redirect(url_for('next_stage'))
+        
         flash('Processing completed', 'success')  # Сообщение об успешной обработке
-        session['process_output'] = result.stdout
+        session['process_output'] = output
         return redirect(url_for('process_output'))
     except Exception as e:
         flash(f'An error occurred during processing: {e}', 'danger')  # Сообщение об ошибке
@@ -117,4 +139,4 @@ if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER_PDF'], exist_ok=True)
     os.makedirs(app.config['UPLOAD_FOLDER_WORD'], exist_ok=True)
     clear_upload_folders()
-    app.run(debug=True)
+    socketio.run(app, debug=True)
