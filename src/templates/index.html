@@ -27,19 +27,21 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data" class="mt-4">
+        <form id="upload-pdf-form" action="/upload" method="post" enctype="multipart/form-data" class="mt-4">
             <div class="form-group">
-                <label for="file-upload" class="custom-file-upload">
+                <label for="pdf-file-upload" class="custom-file-upload">
                     <i class="fa fa-cloud-upload"></i> Выберите файл
                 </label>
-                <input id="file-upload" type="file" class="form-control-file" name="file" accept=".pdf, .docx" required onchange="this.form.submit()">
+                <input id="pdf-file-upload" type="file" class="form-control-file" name="file" accept=".pdf" required onchange="this.form.submit()">
             </div>
         </form>
-        <a href="{{ url_for('next_stage') }}" class="btn btn-primary btn-block mt-4">К следующему этапу</a>
-        {% if file_url %}
+        {% if pdf_file_url %}
+        <form id="next-stage-form" action="/next_stage" method="get" class="mt-4">
+            <button type="submit" class="btn btn-primary btn-block">К следующему этапу</button>
+        </form>
         <div class="mt-4">
             <h2>Загруженный документ:</h2>
-            <iframe src="{{ file_url }}" width="100%" height="600px"></iframe>
+            <iframe src="{{ pdf_file_url }}" width="100%" height="600px"></iframe>
         </div>
         {% endif %}
     </div>

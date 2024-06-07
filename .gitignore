@@ -18,6 +18,9 @@ tempCodeRunnerFile.py
 # Файлы для логирования
 *.log
 
+*.docx
+*.doc
+
 # Игнорировать временные файлы pytest
 *.pytest_cache/
 
