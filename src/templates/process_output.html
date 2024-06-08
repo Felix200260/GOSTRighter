@@ -20,14 +20,18 @@
     <h1>Process Output</h1>
     <div id="output"></div>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         var output = document.getElementById('output');
 
+            if (output) {
         socket.on('process_output', function(msg) {
             var p = document.createElement('p');
             p.textContent = msg.data;
             output.appendChild(p);
             output.scrollTop = output.scrollHeight;
+        });
+            }
         });
     </script>
 </body>

@@ -34,7 +34,7 @@ def index():
     pdf_file_url = session.pop('pdf_file_url', None)
     return render_template('index.html', pdf_file_url=pdf_file_url)
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST']) 
 def upload_file():
     """Загрузка PDF-файла."""
     if 'file' not in request.files:
